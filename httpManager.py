@@ -1,6 +1,7 @@
 #Paul Brennan - Requests Manager - Class for dealing with Requests
 import requests
 import time
+import json
 from logger import logger
 from datetime import datetime
 
@@ -60,13 +61,13 @@ class httpManager:
             response = self.s.post(url, params, headers=headers, proxies=proxy)
             self.debugCheck(url, headers, proxy, response, params)
             if(response.status_code == 200):
-                self.log.log_message("POST Request to URL ("+url+") with paramaters ("+params+") responded with status code 200",0)
+                self.log.log_message("POST Request to URL ("+url+") with paramaters ("+json.dumps(params)+") responded with status code 200",0)
                 return(response)
             else:
-                self.log.log_message("POST Request to URL ("+url+") with paramaters ("+params+") responded with status code ("+str(response.status_code)+")",1)
+                self.log.log_message("POST Request to URL ("+url+") with paramaters ("+json.dumps(params)+") responded with status code ("+str(response.status_code)+")",1)
                 return(False)
         except Exception as e:
-            self.log.log_message("POST Request to URL ("+url+") with paramaters ("+params+") responded with a unknown error",1)
+            self.log.log_message("POST Request to URL ("+url+") with paramaters ("+json.dumps(params)+") responded with a unknown error",1)
             if self.debug:
                 print(e)
             return(False)
