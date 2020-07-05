@@ -28,5 +28,3 @@ class logger:
         with open("./logs/"+self.fetch_time(False)+".txt", "a") as log_file:
             textToWrite = message+"\n"
             log_file.writelines(textToWrite)
-#log = logger()
-#log.log_message("Something",0)
