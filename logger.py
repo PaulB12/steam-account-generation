@@ -26,5 +26,5 @@ class logger:
             #Unsuccessful
             print(self.FAIL + self.fetch_time(True) + " - " + message + self.ENDC)
         with open("./logs/"+self.fetch_time(False)+".txt", "a") as log_file:
-            textToWrite = message+"\n"
+            textToWrite = self.fetch_time(True) + message + "\n"
             log_file.writelines(textToWrite)

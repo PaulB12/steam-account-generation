@@ -28,7 +28,7 @@ class httpManager:
             headers = {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'Accept-Language': 'en-GB',
-                'Origin': 'https://store.steampowered.com',
+                'Origin': 'https://steamcommunity.com/',
                 'Referer': 'https://store.steampowered.com',
                 'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0',
             }
@@ -53,8 +53,8 @@ class httpManager:
             headers = {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'Accept-Language': 'en-GB',
-                'Origin': 'https://store.steampowered.com',
-                'Referer': 'https://store.steampowered.com',
+                'Origin': 'https://steamcommunity.com/',
+                'Referer': 'https://steamcommunity.com/',
                 'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0',
             }
         try:
@@ -73,14 +73,14 @@ class httpManager:
             return(False)
 
     def verifyProxy(self, proxy):
-        response = self.getRequest("https://store.steampowered.com/join/ajaxverifyemail")
+        response = self.getRequest("https://steamcommunity.com/login/home/?goto=")
         if(response != False):
-            if "You must verify your" in response.text:
-                self.log.log_message("Proxy ("+proxy+") has passed verification",0)
+            if "login" in response.text:
+                self.log.log_message("Proxy ("+json.dumps(proxy)+") has passed verification",0)
                 return(True)
             else:
-                self.log.log_message("Proxy ("+proxy+") has failed verification",1)
+                self.log.log_message("Proxy ("+json.dumps(proxy)+") has failed verification",1)
                 return(False)
         else:
-            self.log.log_message("Proxy ("+proxy+") has failed verification",1)
+            self.log.log_message("Proxy ("+json.dumps(proxy)+") has failed verification",1)
             return(False)

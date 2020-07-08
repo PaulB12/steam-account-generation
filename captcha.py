@@ -6,9 +6,9 @@ import json
 
 class captcha:
 
-    def __init__(self, captchaKey, proxy):
+    def __init__(self, captchaKey, proxy, requestManager):
         self.apiKey = captchaKey
-        self.requestManager = httpManager()
+        self.requestManager = requestManager
         self.log = logger()
         self.proxy = proxy
 
@@ -16,7 +16,7 @@ class captcha:
             self.status = True
         else:
             #Change this before I go back to production
-            self.status = True
+            self.status = False
 
     def fetchSteamSiteKey(self):
         if(self.status):
@@ -55,7 +55,7 @@ class captcha:
                 else:
                     if(captchaJson['request'] == 'CAPCHA_NOT_READY'):
                         time.sleep(5)
-                        self.checkCaptcha()
+                        return(self.checkCaptcha())
                     else:
                         self.log.log_message("A captcha error has occured => Dump ("+json.dumps(captchaJson)+")", 1)
                         return(False)
@@ -65,12 +65,15 @@ class captcha:
             self.log.log_message("Can not check a captchaId that does not exist", 1)
             return(False)
 
-    def generateCaptcha(self):
+    def generateCaptcha(self, gid=None):
         captchaResponse = self.sendCaptchaRequest()
         if(captchaResponse != False):
-            self.checkCaptcha()
+            if gid is not None:
+                self.gid = gid
+            return(self.checkCaptcha())
         else:
             self.log.log_message("Captcha request has failed", 1)
+            return(False)
 
     def sendCaptchaRequest(self):
         steamCaptchaGid = self.fetchSteamSiteKey()
@@ -96,20 +99,21 @@ class captcha:
     def reportCaptcha(self, good):
         if(self.captchaId is not None):
             if(good):
-                url = "http://2captcha.com/res.php?key={}&action=reportbad&id={}".format(self.apiKey, self.siteKey, self.captchaId)
+                url = "http://2captcha.com/res.php?key={}&action=reportgood&id={}".format(self.apiKey, self.captchaId)
                 msg = "good"
             else:
-                url = "http://2captcha.com/res.php?key={}&action=reportgood&id={}".format(self.apiKey, self.siteKey, self.captchaId)
+                url = "http://2captcha.com/res.php?key={}&action=reportbad&id={}".format(self.apiKey, self.captchaId)
                 msg = "bad"
             response = self.requestManager.getRequest(url)
             if(response != False):
-                self.log.log_message("Capthca ID ("+self.captchaId+") was successfully reported as "+msg, 0)
+                self.log.log_message("Captcha ID ("+self.captchaId+") was successfully reported as "+msg, 0)
                 return(True)
             else:
                 #Request manager handles this error
                 return(False)
         else:
             self.log.log_message("Cannot report a captcha that doesn't exist",1)
+            return(False)
 
 #captcha = captcha("2eae7d79735c8ffc13e28dd71bec656f", "")
 #captcha.generateCaptcha()
